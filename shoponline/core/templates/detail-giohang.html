@@ -1,0 +1,39 @@
+{% extends 'common/layout.html' %}
+{% block body %}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">E-COMMERCE CART</h1>
+     </div>
+</section>
+
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col"> </th>
+                            <th scope="col">Sản phẩm</th>
+                            <th scope="col" class="text-center">Số lượng</th>
+                            <th scope="col" class="text-right">Giá</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dh in donhangs %}
+                        <tr>
+                            <td><a href="/sanpham/{{dh.sanpham.id}}"><img src="/core/static/{{dh.sanpham.hinhanh}}" style="width: 70px; height: 80px;" /></a></td>
+                            <td>{{dh.sanpham.ten}}</td>
+                            <td class="text-center">{{dh.soluong}}</td>
+                            <td class="text-right">{{dh.sanpham.gia}}</td>
+                            <td class="text-right"><a href="giohang/deletedh/{{dh.id}}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> </a> </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> 
+        </div>
+    </div>
+</div>
+{% endblock %}

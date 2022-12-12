@@ -1,0 +1,113 @@
+{% extends 'common/layout.html' %}
+
+{% block body %}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">E-COMMERCE CATEGORY</h1>
+        <p class="lead text-muted mb-0">Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un peintre anonyme assembla ensemble des morceaux de texte pour réaliser un livre spécimen de polices de texte...</p>
+    </div>
+</section>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="category.html">Category</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{chucnang.ten}}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-sm-3">
+            <div class="card bg-light mb-3">
+                <div class="card-header bg-primary text-white text-uppercase"><i class="fa fa-list"></i> Categories</div>
+                <ul class="list-group category_block">
+                    {% for cate in categories %}
+                        <li class="list-group-item"><a href="/danhmuc?id={{cate.id}}">{{cate.ten}}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="card bg-light mb-3">
+                <div class="card-header bg-success text-white text-uppercase">Bộ lọc</div>
+                    <span class="icon icon-keyboard_arrow_down"></span> 
+                    <select onchange="loc(1)" id="orby" class="form-control px-3">
+                        <option value="ten">Thứ tự A - Z</option>
+                        <option value="-ten">Thứ tự Z - A</option>
+                        <option value="gia">Thứ tự giá tăng dần</option>
+                        <option value="-gia">Thứ tự giá giảm dần</option>
+                    </select>
+                    <input value="{{danhmuc_id}}" id="danhmuc_id" hidden>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="row" id ="load">
+                    {% for sp in sanphams %}
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="card">
+                                <img class="card-img-top" src="/core/static/{{sp.hinhanh}}" alt="Card image cap">
+                                <div class="card-body">
+                                    <h4 class="card-title"><a href="/sanpham/{{sp.id}}" title="View Product">{{sp.ten}}</a></h4>
+                                    <!-- <p class="card-text">{{sp.mota}}</p> -->
+                                    <div class="row">
+                                        <div class="col">
+                                            <p class="btn btn-danger btn-block">{{sp.gia}}</p>
+                                        </div>
+                                        <div class="col">
+                                            <a href="/sanpham/{{sp.id}}" class="btn btn-success btn-block">Add to cart</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col-12">
+                    <nav aria-label="...">
+                        <ul class="pagination">
+                            {% for i in paginator.page_range %}
+                            <li class="page-item" id="{{i}}"><button onclick="loc({{i}})" class="page-link">{{i}}</button></li>
+                            <!-- <li class="page-item active">
+                                <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+                            </li> -->
+                            {% endfor %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% block javascript %}
+<script>
+    function loc(page) {
+        var keyword = document.getElementById('keyword').value;
+        var orby = document.getElementById('orby').value;
+        var danhmuc_id = document.getElementById('danhmuc_id').value;
+        var result = document.getElementById('load');
+        $.ajax({
+            url : "/load", //send to Controller
+            type : "post", //send it through get method
+            data : {
+                keyword : keyword,
+                page : page,
+                danhmuc_id : danhmuc_id,
+                orby : orby
+            },
+            success : function(data) {
+                result.innerHTML = data;
+            },
+            error : function(xhr) {
+                //Do Something to handle error
+            }
+        });
+	};
+
+
+</script>
+{% endblock %}
+{% endblock body %}

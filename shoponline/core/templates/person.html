@@ -1,0 +1,37 @@
+{% extends 'common/layout.html' %}
+{% block body %}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">E-COMMERCE CART</h1>
+     </div>
+</section>
+
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Ngày mua</th>
+                            <th scope="col" class="text-center">Trang thái</th>
+                            <th scope="col" class="text-right">Địa chỉ</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for gh in giohangs %}
+                        <tr>
+                            <td>{{gh.ngaymua}}</td>
+                            <td class="text-center">{{gh.trangthai}}</td>
+                            <td class="text-right">{{gh.diachi}}</td>
+                            <td><a href="/person/detail-gh/{{gh.id}}">Chi tiết</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

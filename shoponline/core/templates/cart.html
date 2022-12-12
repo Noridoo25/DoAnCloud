@@ -1,0 +1,136 @@
+{% extends 'common/layout.html' %}
+{% block body %}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">E-COMMERCE CART</h1>
+     </div>
+</section>
+
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col"> </th>
+                            <th scope="col">Sản phẩm</th>
+                            <th scope="col" class="text-center">Số lượng</th>
+                            <th scope="col" class="text-right">Giá</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dh in donhangs %}
+                        <tr>
+                            <td><a href="/sanpham/{{dh.sanpham.id}}"><img src="/core/static/{{dh.sanpham.hinhanh}}" style="width: 70px; height: 80px;" /></a></td>
+                            <td>{{dh.sanpham.ten}}</td>
+                            <td class="text-center">{{dh.soluong}}</td>
+                            <td class="text-right">{{dh.sanpham.gia}}</td>
+                            <td class="text-right"><a href="giohang/deletedh/{{dh.id}}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> </a> </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h4>Chọn địa chỉ giao hàng</h4>
+                <select class="form-select form-select-sm mb-3" id="city" aria-label=".form-select-sm">
+                <option value="" selected>Chọn tỉnh thành</option>           
+                </select>
+                          
+                <select class="form-select form-select-sm mb-3" id="district" aria-label=".form-select-sm">
+                <option value="" selected>Chọn quận huyện</option>
+                </select>
+                
+                <select class="form-select form-select-sm" id="ward" aria-label=".form-select-sm">
+                <option value="" selected>Chọn phường xã</option>
+                </select>
+                <input id="chitiet" class="form-control" type="text" placeholder="Địa chỉ chi tiết">
+                <h4></h4>
+            </div>
+        </div>
+        <div class="col mb-2">
+            <div class="row">
+                <div class="col-sm-12  col-md-6">
+                    <button class="btn btn-block btn-light">Tiếp tục mua hàng</button>
+                </div>
+                <div class="col-sm-12 col-md-6 text-right">
+                    <form action="">
+                        <button class="btn btn-lg btn-block btn-success text-uppercase" onclick="thanhtoan()">Thanh toán</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% block javascript %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+    var citis = document.getElementById("city");
+    var districts = document.getElementById("district");
+    var wards = document.getElementById("ward");
+    var Parameter = {
+      url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json", 
+      method: "GET", 
+      responseType: "application/json", 
+    };
+    var promise = axios(Parameter);
+    promise.then(function (result) {
+      renderCity(result.data);
+    });
+    
+    function renderCity(data) {
+      for (const x of data) {
+        citis.options[citis.options.length] = new Option(x.Name, x.Id);
+      }
+      citis.onchange = function () {  	
+        district.length = 1;
+        ward.length = 1;
+        if(this.value != ""){
+          const result = data.filter(n => n.Id === this.value);
+    
+          for (const k of result[0].Districts) {
+            district.options[district.options.length] = new Option(k.Name, k.Id);
+          }
+        }
+      };
+      district.onchange = function () {
+        ward.length = 1;
+        const dataCity = data.filter((n) => n.Id === citis.value);
+        if (this.value != "") {
+          const dataWards = dataCity[0].Districts.filter(n => n.Id === this.value)[0].Wards;
+    
+          for (const w of dataWards) {
+            wards.options[wards.options.length] = new Option(w.Name, w.Id);
+          }
+        }
+      };
+    }
+</script>
+<script>
+	function thanhtoan() {
+        let ct = document.getElementById('chitiet').value;
+        let city = document.getElementById('city');
+        let textCity = city.options[city.selectedIndex].text;
+        let district = document.getElementById('district');
+        let textDistrict = district.options[district.selectedIndex].text;
+        let ward = document.getElementById('ward');
+        let textWard = ward.options[ward.selectedIndex].text;
+        let diachi = ct + ", " + textCity + ", " + textDistrict + ", " + textWard;
+		$.ajax({
+			url : "/thanhtoan", //send to Controller
+			type : "post", //send it through get method
+			data : {
+				diachi : diachi
+			},
+			success : function(data) {
+			},
+			error : function(xhr) {
+				//Do Something to handle error
+			}
+		});
+	};
+</script>
+{% endblock %}
+{% endblock %}
