@@ -74,7 +74,7 @@ def ajax_load(request):
     danhmuc_id = request.POST['danhmuc_id']
     page_num = request.POST['page']
     orby = request.POST['orby']
-    if str(danhmuc_id) == '0':
+    if str(danhmuc_id) == '':
         sanphams = sanpham.objects.filter(Q(ten__icontains = keyword) | Q(mota__icontains = keyword)).order_by(orby)
     else:
         sanphams = sanpham.objects.filter(Q(danhmuc = danhmuc_id), (Q(ten__icontains = keyword) | Q(mota__icontains = keyword))).order_by(orby)
