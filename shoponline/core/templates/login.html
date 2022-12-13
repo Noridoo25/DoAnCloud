@@ -6,6 +6,7 @@
             <form action="/login" method="post">
                 {% csrf_token %}
                 <!-- Email input -->
+                <p style="color: red;">{{mess}}</p>
                 <div class="form-outline mb-4">
                   <input name="username" type="text" id="form2Example1" class="form-control" placeholder="Tên tài khoản" />
                 </div>
@@ -35,7 +36,7 @@
                 </div>
                 <div class="col">
                     <!-- Simple link -->
-                    <a href="#!">Quên mật khẩu?</a>
+                    <a href="/forgot-password">Quên mật khẩu?</a>
                 </div>
             </form>
         </div>

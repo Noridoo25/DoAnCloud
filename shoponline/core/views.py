@@ -6,7 +6,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.views import View
 from django.contrib.auth import authenticate, login, logout, decorators
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import send_mail
+import random
 # Create your views here.
+def get_contact(request):
+    return render(request, 'contact.html')
 def get_index(request):
     spmoi = sanpham.objects.filter().order_by('-id')[:4]
     sphot = sanpham.objects.filter().order_by('id')[:4]
@@ -50,12 +55,16 @@ def get_detail_gh(request, id):
 def paging_sanpham(request, sanphams, page_num, danhmuc_id, keyword):
     p = Paginator(sanphams, 3)
     categories = danhmuc.objects.filter()
+    try:
+        dm = danhmuc.objects.get(id = danhmuc_id)
+    except:
+        dm = None
     page = p.page(page_num)
     return {
             'paginator' : p,
             'sanphams' : page,
             'categories' : categories,
-            'danhmuc_id' : danhmuc_id,
+            'dm' : dm,
             'keyword' : keyword,
             'danhmuc' : 'active'
         }
@@ -117,7 +126,15 @@ def thanhtoan(request):
     gh = giohang.objects.get(user= request.user, trangthai=False)
     gh.diachi = request.POST['diachi']
     gh.trangthai = True
+    donhangs = gh.donhangs.all()
+    tongtien = 0
+    for dh in donhangs:
+        tongtien += int(dh.sanpham.gia)
     gh.save()
+
+    text = 'Có người vừa mới đặt hàng\n' + 'Địa chỉ: ' + str(gh.diachi) + '\n' + 'Tổng tiền: ' + str(tongtien)
+    send_mail('Đơn hàng mới', text, 'hokimtien0202@gmail.com', ['hokimtien2002@gmail.com'])
+
     return redirect('/giohang')
 
 class Login(View):
@@ -129,11 +146,12 @@ class Login(View):
         ps = request.POST['password']
         check = authenticate(username=us, password=ps)
         if check is None:
-            return render(request, 'login.html')
+            return render(request, 'login.html', {'mess' : 'Tên đăng nhập hoặc mật khẩu không chính xác'})
         login(request, check)
         return redirect('/')
 
-class Logout(View):
+class Logout(LoginRequiredMixin, View):
+    login_url = '/login'
     def get(self, request):
         logout(request)
         return redirect('/')
@@ -149,8 +167,62 @@ class Register(View):
         ten = request.POST['ten']
         us = user.objects.create(username = username)
         us.email = email
-        us.firstname = ho
-        us.lastname = ten
+        us.first_name = ho
+        us.last_name = ten
         us.set_password(ps)
         us.save()
         return redirect('/login')
+
+class ChangePw(LoginRequiredMixin, View):
+    login_url = '/login'
+    def get(self, request):
+        return render(request, 'changepw.html')
+    def post(self, request):
+        us = request.POST['username']
+        old_ps = request.POST['old-pw']
+        new_ps = request.POST['password']
+        check = authenticate(username=us, password=old_ps)
+        if check is None:
+            return render(request, 'changepw.html', {'mess' : 'Mật khẩu không chính xác'})
+        else:
+            u = user.objects.get(username = us)
+            u.set_password(new_ps)
+            u.save()
+            return redirect('/login')
+
+class ForgotPw(View):
+    def get(self, request):
+        return render(request, 'forgotpw.html')
+    def post(self, request):
+        code = random.randint(1000, 9999)
+        request.session['code'] = code
+        request.session.set_expiry(60)
+        us = request.POST['username']
+        try:
+            u = user.objects.get(username=us)
+        except:
+            u = None
+        if u is None:
+            return render(request, 'forgotpw.html', {'mess' : 'Tên đăng nhập không đúng'})
+        else:
+            text = 'Bạn vừa có yêu cầu đổi mật khẩu, mã xác nhận là: ' + str(code)
+            send_mail('Yêu cầu đổi mật khẩu', text, 'hokimtien0202@gmail.com', [u.email])
+            return render(request, 'verify-forgotpw.html', {'username' : us})
+
+def verify_forgetpw(request):
+    code = request.POST['verify']
+    us = request.POST['username']
+    pw = request.POST['password']
+    u = user.objects.get(username=us)
+    try:
+        vf = request.session['code']
+    except:
+        vf = ''
+        return render(request, 'forgotpw.html', {'username' : us, 'mess' : 'Mã xác nhận đã hết hạn'})
+    if str(code) == str(vf):
+        u.set_password(pw)
+        del request.session['code']
+        u.save()
+        return redirect('/login')
+    else:
+        return render(request, 'verify-forgotpw.html', {'username' : us, 'mess' : 'Mã xác nhận không đúng'})

@@ -17,7 +17,6 @@
                             <th scope="col">Sản phẩm</th>
                             <th scope="col" class="text-center">Số lượng</th>
                             <th scope="col" class="text-right">Giá</th>
-                            <th> </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,7 +26,6 @@
                             <td>{{dh.sanpham.ten}}</td>
                             <td class="text-center">{{dh.soluong}}</td>
                             <td class="text-right">{{dh.sanpham.gia}}</td>
-                            <td class="text-right"><a href="giohang/deletedh/{{dh.id}}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> </a> </td>
                         </tr>
                         {% endfor %}
                     </tbody>

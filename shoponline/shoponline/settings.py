@@ -73,26 +73,17 @@ WSGI_APPLICATION = 'shoponline.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-#sqlite
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'shoponline',
+        'USER': 'root',
+        'PASSWORD': '12346',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
-
-#MySQL
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql', 
-#         'NAME': 'shoponline',
-#         'USER': 'root',
-#         'PASSWORD': '12346',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#     }
-# }
-
 AUTH_USER_MODEL = 'core.user'
 
 # Password validation
@@ -136,3 +127,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'core/static/')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#Send mail
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'hokimtien0202@gmail.com'
+EMAIL_HOST_PASSWORD ='faotjwznbztgufks'
+EMAIL_PORT = '587'

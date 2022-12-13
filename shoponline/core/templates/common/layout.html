@@ -36,6 +36,9 @@
                         id_sp : id_sp
                     },
                     success : function(data) {
+                        if(data != 'Đã thêm vào giỏ hàng'){
+                            data = 'Bạn cần đăng nhập';
+                        }
                         document.getElementById('add-btn').innerText = data;
                     },
                     error : function(xhr) {

@@ -21,6 +21,7 @@ from core import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.get_index),
+    path('contact', views.get_contact),
     path('sanpham/<int:id>/', views.get_sanpham),
     path('danhmuc', views.get_danhmuc),
     path('load', views.ajax_load),
@@ -29,6 +30,9 @@ urlpatterns = [
     path('login', views.Login.as_view()),
     path('logout', views.Logout.as_view()),
     path('register', views.Register.as_view()),
+    path('change-password', views.ChangePw.as_view()),
+    path('forgot-password', views.ForgotPw.as_view()),
+    path('forgot-password/verify', views.verify_forgetpw),
     path('giohang/deletedh/<int:id>/', views.deleteDh),
     path('thanhtoan', views.thanhtoan),
     path('person', views.get_all_gh),
