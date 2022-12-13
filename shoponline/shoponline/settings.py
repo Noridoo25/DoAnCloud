@@ -74,16 +74,25 @@ WSGI_APPLICATION = 'shoponline.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+#data local
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'shoponline',
-        'USER': 'root',
-        'PASSWORD': '12346',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+#Mysql
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql', 
+#         'NAME': 'shoponline',
+#         'USER': 'root',
+#         'PASSWORD': '12346',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
 AUTH_USER_MODEL = 'core.user'
 
 # Password validation
